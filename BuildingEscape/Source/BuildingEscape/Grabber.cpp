@@ -21,10 +21,41 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Grabber Reporting For Duty!"));
+	UE_LOG(LogTemp, Warning, TEXT("Grabber Reporting For Duty!"))
+
+	/// Look for the attached phyics handle
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle)
+	{
+		// Physics Handle Found
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Error, TEXT("%s missing physics handle component"), *GetOwner()->GetName())
+	}
+
+	/// Look for attached input component
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s found input component"), *GetOwner()->GetName())
+
+		/// Bind the input action
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Error, TEXT("%s missing input component"), *GetOwner()->GetName())
+	}
 
 }
 
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"))
+}
 
 // Called every frame
 void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
@@ -39,18 +70,19 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		OUT PlayerViewPointRotation
 	);
 
+	/// Sets the point where the debug line extends to
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * reach;
 
 	/// Draw a red trace in the world for debugging
 	DrawDebugLine(
-		GetWorld(), 
-		PlayerViewPointLocation,
-		LineTraceEnd,
-		FColor(255,0,0),
-		false,
-		0.f,
-		0.f,
-		10.f
+		GetWorld(), // Draw the line in the world
+		PlayerViewPointLocation, // start point of line
+		LineTraceEnd, // end point of line
+		FColor(255,0,0), // colour of line
+		false, // Persistence, i.e. false never goes away
+		0.f, // Lifetime
+		0.f, // ??
+		10.f // Line thickness
 	);
 
 	/// Setup Query Parameters
@@ -67,7 +99,6 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		);
 
 	/// See what we hit
-
 	AActor* ActorHit = Hit.GetActor();
 	if (ActorHit)
 	{

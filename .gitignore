@@ -18,4 +18,5 @@ BuildingEscape/Content/StarterContent/
 
 *.VC.db
 
+*.VC.VC.opendb
 BuildingEscape/\.vs/BuildingEscape/v14/\.suo
