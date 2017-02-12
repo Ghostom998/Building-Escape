@@ -21,6 +21,7 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
+
 private:
 	//How far the player can reach
 	float reach = 100.f;
@@ -37,5 +38,10 @@ private:
 	void FindPhysicsHandleComponent();
 
 	const FHitResult GetFirstPhyicsBodyInReach();
+
+	// The Players reach start and end points
+	FVector GetReachLineStart();
+	FVector GetReachLineEnd();
+	
 
 };
